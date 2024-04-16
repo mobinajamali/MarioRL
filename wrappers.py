@@ -1,12 +1,13 @@
 import numpy as np
 from gym import Wrapper
-from gym.wrappers import gray_scale_observation, resize_observation, frame_stack
+from gym.wrappers import GrayScaleObservation, ResizeObservation, FrameStack
+
 
 class SkipFrame(Wrapper):
     def __init__(self, env, skip):
         super().__init__(env)
         self.skip = skip
-
+    
     def step(self, action):
         total_reward = 0.0
         done = False
@@ -15,12 +16,12 @@ class SkipFrame(Wrapper):
             total_reward += reward
             if done:
                 break
-            return next_state, total_reward, done, trunc, info
-
+        return next_state, total_reward, done, trunc, info
+    
 
 def apply_wrappers(env):
-    env = SkipFrame(env, skip=4)  # Num of frames to apply one action to
-    env = resize_observation(env, shape=84)  # Resize frame from 240x256 to 84x84
-    env = gray_scale_observation(env)
-    env = frame_stack(env, num_stack=4, lz4_compress=True)
+    env = SkipFrame(env, skip=4) # Num of frames to apply one action to
+    env = ResizeObservation(env, shape=84) # Resize frame from 240x256 to 84x84
+    env = GrayScaleObservation(env)
+    env = FrameStack(env, num_stack=4, lz4_compress=True) # May need to change lz4_compress to False if issues arise
     return env
