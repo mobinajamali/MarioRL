@@ -2,10 +2,16 @@ import time
 import datetime
 
 def get_current_date_time_string():
+    """
+    return the current date and time
+    """
     return datetime.datetime.now().strftime("%Y-%m-%d-%H_%M_%S")
 
 
 class Timer():
+    """
+    measure code execution time
+    """
     def __init__(self):
         self.times = []
 
