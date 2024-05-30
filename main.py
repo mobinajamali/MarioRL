@@ -1,24 +1,13 @@
 import torch
-
 import gym_super_mario_bros
 from gym_super_mario_bros.actions import RIGHT_ONLY
-
 from agent import Agent
-
 from nes_py.wrappers import JoypadSpace
 from wrappers import apply_wrappers
-
 import os
-
 from utils import *
 
 model_path = os.path.join("models", get_current_date_time_string())
-os.makedirs(model_path, exist_ok=True)
-
-if torch.cuda.is_available():
-    print("Using CUDA device:", torch.cuda.get_device_name(0))
-else:
-    print("CUDA is not available")
 
 ENV_NAME = 'SuperMarioBros-1-1-v0'
 SHOULD_TRAIN = True
@@ -26,13 +15,15 @@ DISPLAY = True
 CKPT_SAVE_INTERVAL = 5000
 NUM_OF_EPISODES = 100
 
+# initialize environment
 env = gym_super_mario_bros.make(ENV_NAME, render_mode='human' if DISPLAY else 'rgb', apply_api_compatibility=True)
 env = JoypadSpace(env, RIGHT_ONLY)
-
 env = apply_wrappers(env)
 
+# initialize the agent
 agent = Agent(input_dims=env.observation_space.shape, num_actions=env.action_space.n)
 
+# load pretrained model
 if not SHOULD_TRAIN:
     folder_name = get_current_date_time_string()
     ckpt_name = "model_checkpoint.pth"
@@ -54,6 +45,7 @@ for i in range(NUM_OF_EPISODES):
         new_state, reward, done, truncated, info  = env.step(a)
         total_reward += reward
 
+        # store the experience and train the agent if training is enabled
         if SHOULD_TRAIN:
             agent.store_in_memory(state, a, reward, new_state, done)
             agent.learn()
