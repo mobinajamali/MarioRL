@@ -3,9 +3,13 @@ from torch import nn
 import numpy as np
 
 class AgentNN(nn.Module):
+    """
+    define neural network architecture
+    """
     def __init__(self, input_shape, n_actions, freeze=False):
         super().__init__()
-        # Conolutional layers
+
+        # Convolutional layers
         self.conv_layers = nn.Sequential(
             nn.Conv2d(input_shape[0], 32, kernel_size=8, stride=4),
             nn.ReLU(),
@@ -29,18 +33,25 @@ class AgentNN(nn.Module):
         if freeze:
             self._freeze()
         
-        self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
+        self.device = 'cpu'
         self.to(self.device)
 
     def forward(self, x):
         return self.network(x)
 
     def _get_conv_out(self, shape):
-        o = self.conv_layers(torch.zeros(1, *shape))
-        # np.prod returns the product of array elements over a given axis
-        return int(np.prod(o.size()))
+        """
+        compute the output size after passing an input through 
+        the convolutional layers. 
+        """
+        out = self.conv_layers(torch.zeros(1, *shape))
+        return int(np.prod(out.size()))
     
-    def _freeze(self):        
-        for p in self.network.parameters():
-            p.requires_grad = False
+    def _freeze(self):  
+        """
+        iterates through all parameters of the network and 
+        effectively freezes them.
+        """      
+        for param in self.network.parameters():
+            param.requires_grad = False
     
