@@ -1,7 +1,7 @@
 # MarioRL
 Teaching AI to Play Super Mario Using Reinforcement Learning (Double Deep Q Learning Algorithm)!
 
-![Played Super Mario GIF](./thumbnails/output.gif)
+![Played Super Mario IMG](./thumbnails/image.png)
 
 1. Set up a Mario environment
 2. Preprocess the game for applied AI
